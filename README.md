@@ -69,6 +69,12 @@ In this file you'll find the following settings:
 - **tableName**: "electionresults"
   - the name of the DynamoDB Table where the JSON statistics are stored
   
+## CSV URLs and mappings
+- PUT request on /api/settings/election-config with a JSON representation of ElectionsConfig.cs. This will overwrite the json from AWS Parameter Store.
+- The ElectionsConfig object has:
+  - a list of candidates where information about them can be provided(candidates picture, names, CSV column id, etc.)
+  - a list of BEC URLs, each file has the type of results(provisional, partial or final), location(Romania or Diaspora), URL
+
 #### Run unit tests
 - `cd tests\ElectionResults.Tests`
 - `dotnet test`

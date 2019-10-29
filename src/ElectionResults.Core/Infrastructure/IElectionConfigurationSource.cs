@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using CSharpFunctionalExtensions;
 using ElectionResults.Core.Models;
 
 namespace ElectionResults.Core.Infrastructure
 {
     public interface IElectionConfigurationSource
     {
-        Task<List<ElectionResultsFile>> GetListOfFilesWithElectionResults();
+        Task<Result> UpdateJobTimer(string newTimer);
 
-        Task<List<Candidate>> GetListOfCandidates();
+        List<ElectionResultsFile> GetListOfFilesWithElectionResults();
+
+        Task<Result> UpdateElectionConfig(ElectionsConfig config);
     }
 }

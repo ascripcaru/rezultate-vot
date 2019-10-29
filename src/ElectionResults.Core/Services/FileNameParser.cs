@@ -13,8 +13,8 @@ namespace ElectionResults.Core.Services
             var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
             electionStatistics.Id = $"{DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks:D19}";
             var attributes = fileNameWithoutExtension.Split('_');
-            electionStatistics.Location = attributes[1];
             electionStatistics.Type = attributes[0];
+            electionStatistics.Location = attributes[1];
             electionStatistics.FileTimestamp = long.Parse(attributes[2]);
             electionStatistics.StatisticsJson = JsonConvert.SerializeObject(electionResultsData);
             return electionStatistics;

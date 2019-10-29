@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using ElectionResults.Core.Infrastructure;
@@ -71,27 +70,9 @@ namespace ElectionResults.Tests.BlobProcessorTests
             await _resultsRepository.ReceivedWithAnyArgs(1).InsertResults(null);
         }
 
-        [Fact]
-        public async Task initialize_candidates_from_config()
-        {
-            var blobProcessor = CreateTestableBlobProcessor();
-            MapStatisticsAggregatorToSuccessfulResult();
-            MapConfigurationSourceToEmptyListOfCandidates();
-
-            await blobProcessor.ProcessStream(new MemoryStream(), _fileName);
-
-            await _electionConfigurationSource.ReceivedWithAnyArgs(1).GetListOfCandidates();
-        }
-
-        private void MapConfigurationSourceToEmptyListOfCandidates()
-        {
-            var candidatesList = Task.FromResult(new List<Candidate>());
-            _electionConfigurationSource.GetListOfCandidates().ReturnsForAnyArgs(candidatesList);
-        }
-
         private TestableFileProcessor CreateTestableBlobProcessor()
         {
-            return new TestableFileProcessor(_resultsRepository, _electionConfigurationSource, _statisticsAggregator);
+            return new TestableFileProcessor(_resultsRepository, _electionConfigurationSource, _statisticsAggregator, null);
         }
 
         private void MapStatisticsAggregatorToSuccessfulResult()

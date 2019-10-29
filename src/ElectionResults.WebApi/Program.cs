@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace ElectionResults.WebApi
 {
@@ -12,6 +13,11 @@ namespace ElectionResults.WebApi
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration(builder =>
+                {
+                    builder.AddJsonFile("appsettings.json");
+                    builder.AddSystemsManager("/vote-results-test");
+                })
                 .UseStartup<Startup>();
     }
 }

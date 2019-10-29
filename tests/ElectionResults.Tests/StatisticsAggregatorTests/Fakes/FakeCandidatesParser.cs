@@ -11,7 +11,7 @@ namespace ElectionResults.Tests.StatisticsAggregatorTests.Fakes
         public Task<Result<ElectionResultsData>> Parse(ElectionResultsData electionResultsData, string csvContent)
         {
             WasInvoked = true;
-            electionResultsData.Candidates = new List<Candidate>();
+            electionResultsData.Candidates = new List<CandidateStatistics>();
             return Task.FromResult(Result.Ok(electionResultsData));
         }
 

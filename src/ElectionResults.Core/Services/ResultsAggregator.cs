@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -20,23 +21,13 @@ namespace ElectionResults.Core.Services
 
         public async Task<ElectionResultsData> GetResults(ResultsType type)
         {
-            string resultsType = ConvertEnumToString(type);
+            string resultsType = type.ConvertEnumToString();
 
             var localResults = await _resultsRepository.GetLatestResults(Consts.LOCAL, resultsType);
             var diasporaResults = await _resultsRepository.GetLatestResults(Consts.DIASPORA, resultsType);
             var localResultsData = JsonConvert.DeserializeObject<ElectionResultsData>(localResults.StatisticsJson);
             var diasporaResultsData = JsonConvert.DeserializeObject<ElectionResultsData>(diasporaResults.StatisticsJson);
             return StatisticsAggregator.CombineResults(localResultsData, diasporaResultsData);
-        }
-
-        private static string ConvertEnumToString(ResultsType type)
-        {
-            return type
-                       .GetType()
-                       .GetMember(type.ToString())
-                       .FirstOrDefault()
-                       ?.GetCustomAttribute<DescriptionAttribute>()
-                       ?.Description ?? type.ToString();
         }
     }
 }

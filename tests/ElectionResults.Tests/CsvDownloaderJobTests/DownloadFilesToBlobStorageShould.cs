@@ -23,7 +23,7 @@ namespace ElectionResults.Tests.CsvDownloaderJobTests
 
             await csvDownloaderJob.DownloadFilesToBlobStorage();
 
-            await _electionConfigurationSource.Received(1).GetListOfFilesWithElectionResults();
+            _electionConfigurationSource.Received(1).GetListOfFilesWithElectionResults();
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace ElectionResults.Tests.CsvDownloaderJobTests
         public async Task BuildNameOfUploadedFiles()
         {
             var csvDownloaderJob = CreatecsvDownloaderJob();
-            CreateResultsSourceMock(new ElectionResultsFile { Id = "abc" });
+            CreateResultsSourceMock(new ElectionResultsFile { ResultsType = ResultsType.Final, ResultsLocation = ResultsLocation.Romania});
             SystemTime.Now = DateTimeOffset.UtcNow;
             var timestamp = SystemTime.Now.ToUnixTimeSeconds();
 
@@ -79,7 +79,7 @@ namespace ElectionResults.Tests.CsvDownloaderJobTests
 
             await _bucketUploader
                 .Received(1)
-                .UploadFromUrl(Arg.Is<ElectionResultsFile>(f => f.Name == $"abc_{timestamp}.csv"));
+                .UploadFromUrl(Arg.Is<ElectionResultsFile>(f => f.Name == $"FINAL_RO_{timestamp}.csv"));
         }
 
         private CsvDownloaderJob CreatecsvDownloaderJob()
@@ -92,7 +92,7 @@ namespace ElectionResults.Tests.CsvDownloaderJobTests
         private void CreateResultsSourceMock(params ElectionResultsFile[] files)
         {
             _electionConfigurationSource.GetListOfFilesWithElectionResults()
-                .ReturnsForAnyArgs(info => Task.FromResult(files.ToList()));
+                .ReturnsForAnyArgs(info => files.ToList());
         }
     }
 }

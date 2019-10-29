@@ -9,6 +9,7 @@
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.101.78" />
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.3.100.1" />
     <PackageReference Include="AWSSDK.S3" Version="3.3.104.40" />
+    <PackageReference Include="AWSSDK.SimpleSystemsManagement" Version="3.3.100.8" />
     <PackageReference Include="CSharpFunctionalExtensions" Version="2.1.1" />
     <PackageReference Include="CsvHelper" Version="12.1.2" />
   </ItemGroup>

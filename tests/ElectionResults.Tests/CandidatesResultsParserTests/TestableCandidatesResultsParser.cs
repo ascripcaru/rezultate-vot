@@ -1,18 +1,25 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ElectionResults.Core.Models;
 using ElectionResults.Core.Services.CsvProcessing;
+using ElectionResults.Core.Storage;
+using Microsoft.Extensions.Options;
 
 namespace ElectionResults.Tests.CandidatesResultsParserTests
 {
     public class TestableCandidatesResultsParser: CandidatesResultsParser
     {
-        protected override Task PopulateCandidatesListWithVotes(string csvContent)
+        public TestableCandidatesResultsParser(IOptions<AppConfig> config) : base(config)
         {
-            Candidates = ParsedCandidates;
+
+        }
+
+        protected override Task PopulateCandidatesListWithVotes(string csvContent, List<CandidateStatistics> candidates)
+        {
             return Task.CompletedTask;
         }
 
-        public List<Candidate> ParsedCandidates { get; set; }
+        public List<CandidateStatistics> ParsedCandidates { get; set; }
     }
 }

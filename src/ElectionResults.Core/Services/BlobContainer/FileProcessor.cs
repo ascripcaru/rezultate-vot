@@ -6,38 +6,35 @@ using System.Threading.Tasks;
 using ElectionResults.Core.Infrastructure;
 using ElectionResults.Core.Services.CsvProcessing;
 using ElectionResults.Core.Storage;
+using Microsoft.Extensions.Options;
 
 namespace ElectionResults.Core.Services.BlobContainer
 {
     public class FileProcessor : IFileProcessor
     {
         private readonly IResultsRepository _resultsRepository;
-        private readonly IElectionConfigurationSource _electionConfigurationSource;
         private readonly IStatisticsAggregator _statisticsAggregator;
 
         public FileProcessor(IResultsRepository resultsRepository,
             IElectionConfigurationSource electionConfigurationSource,
-            IStatisticsAggregator statisticsAggregator)
+            IStatisticsAggregator statisticsAggregator,
+            IOptions<AppConfig> config)
         {
             _resultsRepository = resultsRepository;
-            _electionConfigurationSource = electionConfigurationSource;
             _statisticsAggregator = statisticsAggregator;
             _statisticsAggregator.CsvParsers = new List<ICsvParser>
             {
-                new CandidatesResultsParser()
+                new CandidatesResultsParser(config)
             };
         }
 
         public async Task ProcessStream(Stream csvStream, string fileName)
         {
-            Config.Candidates = await _electionConfigurationSource.GetListOfCandidates();
             var csvContent = await ReadCsvContent(csvStream);
             var aggregationResult = await _statisticsAggregator.RetrieveElectionData(csvContent);
             if (aggregationResult.IsSuccess)
             {
-
-                var electionStatistics =
-                    FileNameParser.BuildElectionStatistics(fileName, aggregationResult.Value);
+                var electionStatistics = FileNameParser.BuildElectionStatistics(fileName, aggregationResult.Value);
                 Console.WriteLine($"Uploading file {fileName} with timestamp {electionStatistics.FileTimestamp}");
                 await _resultsRepository.InsertResults(electionStatistics);
             }
