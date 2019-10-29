@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using ElectionResults.Core.Models;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace ElectionResults.Core.Storage
@@ -12,11 +13,13 @@ namespace ElectionResults.Core.Storage
     public class ResultsRepository : IResultsRepository
     {
         private readonly IAmazonDynamoDB _dynamoDb;
+        private readonly ILogger<ResultsRepository> _logger;
         private AppConfig _config;
 
-        public ResultsRepository(IOptions<AppConfig> config, IAmazonDynamoDB dynamoDb)
+        public ResultsRepository(IOptions<AppConfig> config, IAmazonDynamoDB dynamoDb, ILogger<ResultsRepository> logger)
         {
             _dynamoDb = dynamoDb;
+            _logger = logger;
             _config = config.Value;
         }
 
@@ -24,6 +27,7 @@ namespace ElectionResults.Core.Storage
         {
             try
             {
+                _logger.LogInformation($"Inserting results");
                 var tableExists = await TableIsReady();
                 if (!tableExists)
                     await CreateTable();
@@ -46,7 +50,7 @@ namespace ElectionResults.Core.Storage
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.LogError(e, "Couldn't insert results");
             }
         }
 
@@ -62,7 +66,7 @@ namespace ElectionResults.Core.Storage
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.LogError(e, $"Table {_config.TableName} isn't ready'");
                 return false;
             }
         }
@@ -81,7 +85,7 @@ namespace ElectionResults.Core.Storage
 
             var results = GetResults(queryResponse.Items);
             var latest = results.OrderByDescending(r => r.FileTimestamp).FirstOrDefault();
-            Console.WriteLine($"Latest for {type} and {location} is {latest.FileTimestamp}");
+            _logger.LogInformation($"Latest for {type} and {location} is {latest.FileTimestamp}");
             return latest;
         }
 

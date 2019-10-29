@@ -1,3 +1,5 @@
+using System;
+using Amazon.Extensions.NETCore.Setup;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +18,7 @@ namespace ElectionResults.WebApi
                 .ConfigureAppConfiguration(builder =>
                 {
                     builder.AddJsonFile("appsettings.json");
-                    builder.AddSystemsManager("/vote-results-test");
+                    builder.AddSystemsManager("/vote-results-test", TimeSpan.FromSeconds(30));
                 })
                 .UseStartup<Startup>();
     }
