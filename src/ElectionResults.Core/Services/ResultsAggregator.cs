@@ -27,7 +27,8 @@ namespace ElectionResults.Core.Services
             var diasporaResults = await _resultsRepository.GetLatestResults(Consts.DIASPORA, resultsType);
             var localResultsData = JsonConvert.DeserializeObject<ElectionResultsData>(localResults.StatisticsJson);
             var diasporaResultsData = JsonConvert.DeserializeObject<ElectionResultsData>(diasporaResults.StatisticsJson);
-            return StatisticsAggregator.CombineResults(localResultsData, diasporaResultsData);
+            var electionResultsData = StatisticsAggregator.CombineResults(localResultsData, diasporaResultsData);
+            return electionResultsData;
         }
     }
 }

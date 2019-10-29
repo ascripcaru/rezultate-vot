@@ -2,86 +2,32 @@ import React from "react";
 import { ChartBar } from "./ChartBar";
 import CountiesSelect from "./CountiesSelect";
 import { FormGroup, Col, Button } from "reactstrap";
-
-const candidates = [
-  {
-    id: "1",
-    name: "Candidate X",
-    votes: 1209484,
-    imageUrl:
-      "https://us.123rf.com/450wm/kritchanut/kritchanut1406/kritchanut140600112/29213222-stock-vector-male-silhouette-avatar-profile-picture.jpg?ver=6&fbclid=IwAR0HzpXjYDnMwHFfD8fdnNFrBa8rmLJ74i3NbOsPZvzwNNY7WANjuX6DvGA",
-    percentage: 60
-  },
-  {
-    id: "2",
-    name: "Candidate X",
-    votes: 1209484,
-    imageUrl: "",
-    percentage: 25
-  },
-  {
-    id: "3",
-    name: "Candidate X",
-    votes: 1209484,
-    imageUrl: "",
-    percentage: 40
-  },
-  {
-    id: "4",
-    name: "Candidate X",
-    votes: 1209484,
-    imageUrl: "",
-    percentage: 60
-  },
-  {
-    id: "5",
-    name: "Candidate X",
-    votes: 1209484,
-    imageUrl: "",
-    percentage: 25
-  },
-  {
-    id: "6",
-    name: "Candidate X",
-    votes: 1209484,
-    imageUrl: "",
-    percentage: 40
-  },
-  {
-    id: "7",
-    name: "Candidate X",
-    votes: 1209484,
-    imageUrl: "",
-    percentage: 60
-  },
-  {
-    id: "8",
-    name: "Candidate X",
-    votes: 1209484,
-    imageUrl: "",
-    percentage: 25
-  },
-  {
-    id: "9",
-    name: "Candidate X",
-    votes: 1209484,
-    imageUrl: "",
-    percentage: 40
-  }
-];
+import * as signalR from "@aspnet/signalr";
 
 export const ChartContainer = () => {
   const [showAll, toggleShowAll] = React.useState(false);
-  // const [candidates, setCandidates] = React.useState(null);
+  const [candidates, setCandidates] = React.useState(null);
   React.useEffect(() => {
-    // fetch(
-    //   "insert url here"
-    // )
-    //   .then(data => data.json())
-    //   .then(data => {
-    //     setCandidates(data.candidates);
-    //   });
-  });
+     fetch(
+       "/api/results"
+     )
+       .then(data => data.json())
+       .then(data => {
+         setCandidates(data.candidates);
+       });
+  }, []);
+  const connection = new signalR.HubConnectionBuilder()
+      .withUrl("/live-results")
+      .build();
+
+      connection
+          .start()
+          .then(() => console.log('Connection started!'))
+          .catch(err => console.log('Error while establishing connection :('));
+
+      connection.on('results-updated', (data) => {
+          setCandidates(data.candidates);
+      });
   return (
     <div>
       {candidates ? (

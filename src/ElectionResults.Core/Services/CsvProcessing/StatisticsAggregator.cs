@@ -30,6 +30,7 @@ namespace ElectionResults.Core.Services.CsvProcessing
                 decimal percentage = Math.Round((decimal)candidate.Votes / sumOfVotes * 100, 2);
                 candidate.Percentage = percentage;
             }
+            electionResultsData.Candidates = electionResultsData.Candidates.OrderByDescending(c => c.Percentage).ToList();
         }
 
 
